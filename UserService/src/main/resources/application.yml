@@ -1,0 +1,55 @@
+
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/RatingMicroservices
+    username: root
+    password: Kishan@M3153
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  application:
+    name: USER-SERVICE
+  # Eureka server configuration
+  config:
+    import: optional:configserver:http://localhost:8085
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+
+#actuator config for enabling circuit breaker including heath and showing health details
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+
+  endpoint:
+    health:
+      show-details: always
+
+#Resilience4j configuration for circuit break checking
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      RatingCircuitBreaker:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+
+

@@ -1,0 +1,43 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: RATING-SERVICE
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: RatingMicroservices
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+
+  instance:
+    prefer-ip-address: true
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+resilience4j:
+  retry:
+    instances:
+      HotelCircuitBreaker:
+        max-attempts: 3
+        wait-duration: 5s
+
+  ratelimiter:
+    instances:
+      HotelRateLimiter:
+        limitRefreshPeriod: 4s
+        limitForPeriod: 2
+        timeoutDuration: 0s
+
